@@ -19,14 +19,35 @@ app.use(bodyParser.json());
 io.on('connection', (socket)=>{
   console.log('New User Connected');
 
+  // Send a message to "this socket" - the one that connected
   socket.emit('newMessage', {
-    from: 'John Smith',
-    text: 'I am having fun.',
-    createdAt: new Date().toString()
+    from: 'Admin',
+    text: 'Welcome to the Chat App',
+    createdAt: new Date().getTime()
   });
+
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'New User Joined.',
+    createdAt: new Date().getTime()
+  })
 
   socket.on('createMessage', (message)=>{
     console.log('New message received - ', message);
+
+    // SENDS to Everyone connected
+    io.emit('newMessage', {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    });
+
+    // Send to everyone except "this socket"
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createdAt: new Date().getTime()
+    // });
   });
 
   socket.on('disconnect', ()=>{
