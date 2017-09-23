@@ -5,7 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const socketIO = require('socket.io');
 
-const {generateMessage} = require('./utils/message')
+const {generateMessage, generateLocationMessage} = require('./utils/message')
 
 const publicPath = path.join(__dirname, '../public');
 console.log('Public Path - ', publicPath);
@@ -39,6 +39,12 @@ io.on('connection', (socket)=>{
     //   text: message.text,
     //   createdAt: new Date().getTime()
     // });
+  });
+
+  socket.on('createLocationMessage', (coords)=>{
+    console.log('Location Message received - ', coords)
+    io.emit('newLocationMessage',
+             generateLocationMessage('User', coords.latitude, coords.longitute));
   });
 
   socket.on('disconnect', ()=>{
