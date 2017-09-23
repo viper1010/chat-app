@@ -26,10 +26,12 @@ io.on('connection', (socket)=>{
 
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined.'));
 
-  socket.on('createMessage', (message)=>{
+  socket.on('createMessage', function (message, callback) {
 
     // SENDS to Everyone connected
     io.emit('newMessage', generateMessage(message.from, message.text));
+    if(callback)
+      callback('Message successfully processed.');
 
     // Send to everyone except "this socket"
     // socket.broadcast.emit('newMessage', {
